@@ -1,5 +1,7 @@
 
 
+import re
+
 from textblob import TextBlob
 from cached_property import cached_property
 from bs4 import BeautifulSoup
@@ -86,7 +88,51 @@ class Snippet:
 
         return counts
 
-    def tag_ratio(self, tag):
+    def tag_ratio(self, *tags):
         """Given a POS tag, return a ratio of (tag count / total tokens).
         """
-        return self.tag_counts[tag] / len(self.tags)
+        return sum([self.tag_counts[t] for t in tags]) / len(self.tags)
+
+    def blank_line_ratio(self):
+        """Ratio of lines that are blank.
+        """
+        lines = self.text.splitlines()
+
+        blank_count = len([line for line in lines if not line])
+
+        return blank_count / len(lines)
+
+    def digit_ratio(self):
+        """Ratio of digit characters.
+        """
+        digits = re.findall('[0-9]', self.text)
+
+        return len(digits) / len(self.text)
+
+    def caps_ratio(self):
+        """Ratio of digit characters.
+        """
+        caps = re.findall('[A-Z]', self.text)
+
+        return len(caps) / len(self.text)
+
+    def features(self):
+        """Assembly a features row.
+        """
+        return dict(
+
+            blank_line_ratio=self.blank_line_ratio(),
+            digit_ratio=self.digit_ratio(),
+            caps_ratio=self.caps_ratio(),
+
+            pos_cd_ratio=self.tag_ratio('CD'),
+            pos_dt_ratio=self.tag_ratio('DT'),
+            pos_jj_ratio=self.tag_ratio('JJ', 'JJR', 'JJS'),
+            pos_nn_ratio=self.tag_ratio('NN', 'NNS', 'NNP', 'NNPS'),
+            pos_rb_ratio=self.tag_ratio('RB', 'RBR', 'RBS'),
+
+            pos_vb_ratio=self.tag_ratio(
+                'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'
+            ),
+
+        )
