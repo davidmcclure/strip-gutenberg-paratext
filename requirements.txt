@@ -1,0 +1,10 @@
+
+ipython
+jupyter
+numpy
+scipy
+sklearn
+textblob
+pandas
+cached_property
+beautifulsoup4
