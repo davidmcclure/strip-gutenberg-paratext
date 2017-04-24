@@ -3,6 +3,7 @@
 from textblob import TextBlob
 from cached_property import cached_property
 from bs4 import BeautifulSoup
+from collections import Counter
 
 
 class Text:
@@ -36,7 +37,15 @@ class Text:
             if False not in [token in line for token in e_tokens]:
                 i2 = i
 
-        text = '\n'.join(lines[i1:i2])
+        self.text = '\n'.join(lines[i1:i2])
+
+
+class TrainingText(Text):
+
+    def __init__(self, text):
+        """Strip the Gutenberg header / footer.
+        """
+        super().__init__(text)
 
         self.tree = BeautifulSoup(text, 'html.parser')
 
@@ -51,3 +60,33 @@ class Text:
         """
         tag = self.tree.select_one('back')
         return tag.text or None
+
+
+class Snippet:
+
+    def __init__(self, text):
+        self.text = text
+
+    @cached_property
+    def blob(self):
+        return TextBlob(self.text)
+
+    @cached_property
+    def tags(self):
+        return self.blob.tags
+
+    @cached_property
+    def tag_counts(self):
+        """Build a counter of (tag -> count).
+        """
+        counts = Counter()
+
+        for token, tag in self.tags:
+            counts[tag] += 1
+
+        return counts
+
+    def tag_ratio(self, tag):
+        """Given a POS tag, return a ratio of (tag count / total tokens).
+        """
+        return self.tag_counts[tag] / len(self.tags)
