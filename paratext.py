@@ -67,7 +67,7 @@ class Text:
 class TrainingText(Text):
 
     def __init__(self, text):
-        """Strip the Gutenberg header / footer.
+        """Parse the markup.
         """
         super().__init__(text)
 
@@ -80,10 +80,10 @@ class TrainingText(Text):
         return tag.text or None
 
 
+@attr.s
 class Snippet:
 
-    def __init__(self, text):
-        self.text = text
+    text = attr.ib()
 
     @cached_property
     def blob(self):
@@ -177,7 +177,7 @@ class TrainingCorpus:
         """
         yield from scan_paths(self.path, '\.xml')
 
-    def build_df(self, tag):
+    def build_front_df(self, tag):
         """Build a dataframe of frontmatter training cases.
 
         Args:
@@ -186,8 +186,11 @@ class TrainingCorpus:
         data = []
 
         for path in self.paths():
+
             text = TrainingText.from_file(path)
+
             snippet = Snippet(text.get_text(tag))
+
             data.append(snippet.features())
 
         df = pd.DataFrame(data)
