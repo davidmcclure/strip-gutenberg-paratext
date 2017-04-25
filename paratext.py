@@ -57,6 +57,12 @@ class TrainingText(Text):
         tag = self.tree.select_one('front')
         return tag.text or None
 
+    def body_text(self):
+        """Get the <body> text.
+        """
+        tag = self.tree.select_one('body')
+        return tag.text or None
+
     def back_text(self):
         """Get the <back> text.
         """
@@ -121,18 +127,31 @@ class Snippet:
         """
         return dict(
 
-            blank_line_ratio=self.blank_line_ratio(),
             digit_ratio=self.digit_ratio(),
+            blank_line_ratio=self.blank_line_ratio(),
             caps_ratio=self.caps_ratio(),
 
-            pos_cd_ratio=self.tag_ratio('CD'),
-            pos_dt_ratio=self.tag_ratio('DT'),
-            pos_jj_ratio=self.tag_ratio('JJ', 'JJR', 'JJS'),
-            pos_nn_ratio=self.tag_ratio('NN', 'NNS', 'NNP', 'NNPS'),
-            pos_rb_ratio=self.tag_ratio('RB', 'RBR', 'RBS'),
+            cd_ratio=self.tag_ratio('CD'),
+            dt_ratio=self.tag_ratio('DT'),
 
-            pos_vb_ratio=self.tag_ratio(
-                'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ'
-            ),
+            jj_ratio=self.tag_ratio('JJ'),
+            jjr_ratio=self.tag_ratio('JJR'),
+            jjs_ratio=self.tag_ratio('JJS'),
+
+            nn_ratio=self.tag_ratio('NN'),
+            nns_ratio=self.tag_ratio('NNS'),
+            nnp_ratio=self.tag_ratio('NNP'),
+            nnps_ratio=self.tag_ratio('NNPS'),
+
+            rb_ratio=self.tag_ratio('RB'),
+            rbr_ratio=self.tag_ratio('RBR'),
+            rbs_ratio=self.tag_ratio('RBS'),
+
+            vb_ratio=self.tag_ratio('VB'),
+            vbd_ratio=self.tag_ratio('VBD'),
+            vbg_ratio=self.tag_ratio('VBG'),
+            vbn_ratio=self.tag_ratio('VBN'),
+            vbp_ratio=self.tag_ratio('VBP'),
+            vbz_ratio=self.tag_ratio('VBZ'),
 
         )
