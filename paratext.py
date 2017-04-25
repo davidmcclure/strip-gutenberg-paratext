@@ -5,6 +5,8 @@ import scandir
 import os
 import attr
 
+import pandas as pd
+
 from textblob import TextBlob
 from cached_property import cached_property
 from bs4 import BeautifulSoup
@@ -71,22 +73,10 @@ class TrainingText(Text):
 
         self.tree = BeautifulSoup(text, 'html.parser')
 
-    def front_text(self):
-        """Get the <front> text.
+    def get_text(self, tag):
+        """Get plain text content of a tag.
         """
-        tag = self.tree.select_one('front')
-        return tag.text or None
-
-    def body_text(self):
-        """Get the <body> text.
-        """
-        tag = self.tree.select_one('body')
-        return tag.text or None
-
-    def back_text(self):
-        """Get the <back> text.
-        """
-        tag = self.tree.select_one('back')
+        tag = self.tree.select_one(tag)
         return tag.text or None
 
 
@@ -183,6 +173,24 @@ class TrainingCorpus:
     path = attr.ib()
 
     def paths(self):
-        """Generate training XMl paths.
+        """Generate training XML paths.
         """
         yield from scan_paths(self.path, '\.xml')
+
+    def build_df(self, tag):
+        """Build a dataframe of frontmatter training cases.
+
+        Args:
+            tag (str): Extract features from this XML tag.
+        """
+        data = []
+
+        for path in self.paths():
+            text = TrainingText.from_file(path)
+            snippet = Snippet(text.get_text(tag))
+            data.append(snippet.features())
+
+        df = pd.DataFrame(data)
+        df['tag'] = tag
+
+        return df
