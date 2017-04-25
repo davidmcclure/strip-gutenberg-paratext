@@ -8,3 +8,5 @@ textblob
 pandas
 cached_property
 beautifulsoup4
+attrs
+scandir

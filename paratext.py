@@ -1,11 +1,31 @@
 
 
 import re
+import scandir
+import os
+import attr
 
 from textblob import TextBlob
 from cached_property import cached_property
 from bs4 import BeautifulSoup
 from collections import Counter
+
+
+def scan_paths(root, pattern=None):
+    """Walk a directory and yield file paths that match a pattern.
+
+    Args:
+        root (str)
+        pattern (str)
+
+    Yields: str
+    """
+    for root, dirs, files in scandir.walk(root, followlinks=True):
+        for name in files:
+
+            # Match the extension.
+            if not pattern or re.search(pattern, name):
+                yield os.path.join(root, name)
 
 
 class Text:
@@ -155,3 +175,14 @@ class Snippet:
             vbz_ratio=self.tag_ratio('VBZ'),
 
         )
+
+
+@attr.s
+class TrainingCorpus:
+
+    path = attr.ib()
+
+    def paths(self):
+        """Generate training XMl paths.
+        """
+        yield from scan_paths(self.path, '\.xml')
