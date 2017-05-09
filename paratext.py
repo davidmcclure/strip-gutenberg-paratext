@@ -79,6 +79,20 @@ class TrainingText(Text):
         tag = self.tree.select_one(tag)
         return tag.text or None
 
+    def get_front(self):
+        """Get the frontmatter.
+        """
+        return self.get_text('front')
+
+    def get_body_beginning(self, num_chars=2000):
+        """Get the first N chars from the body text.
+
+        Args:
+            num_chars (int)
+        """
+        text = self.get_text('body')
+        return text[:num_chars] if text else None
+
 
 @attr.s
 class Snippet:
@@ -176,24 +190,3 @@ class TrainingCorpus:
         """Generate training XML paths.
         """
         yield from scan_paths(self.path, '\.xml')
-
-    def build_front_df(self, tag):
-        """Build a dataframe of frontmatter training cases.
-
-        Args:
-            tag (str): Extract features from this XML tag.
-        """
-        data = []
-
-        for path in self.paths():
-
-            text = TrainingText.from_file(path)
-
-            snippet = Snippet(text.get_text(tag))
-
-            data.append(snippet.features())
-
-        df = pd.DataFrame(data)
-        df['tag'] = tag
-
-        return df
