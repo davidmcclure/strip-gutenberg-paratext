@@ -146,7 +146,12 @@ class Snippet:
 
         return len(caps) / len(self.text)
 
-    def features(self):
+    def chapter_ratio(self):
+        """Ratio of words that are "chapter."
+        """
+        return self.blob.words.count('chapter') / len(self.blob.words)
+
+    def features(self, tags=None):
         """Assembly a features row.
         """
         return dict(
@@ -154,6 +159,7 @@ class Snippet:
             digit_ratio=self.digit_ratio(),
             blank_line_ratio=self.blank_line_ratio(),
             caps_ratio=self.caps_ratio(),
+            chapter_ratio=self.chapter_ratio(),
 
             cd_ratio=self.tag_ratio('CD'),
             dt_ratio=self.tag_ratio('DT'),
@@ -177,6 +183,8 @@ class Snippet:
             vbn_ratio=self.tag_ratio('VBN'),
             vbp_ratio=self.tag_ratio('VBP'),
             vbz_ratio=self.tag_ratio('VBZ'),
+
+            **(tags or {}),
 
         )
 
