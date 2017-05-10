@@ -168,13 +168,10 @@ class Snippet:
             if len(self.text) else 0
         )
 
-    def chapter_ratio(self):
-        """Ratio of words that are "chapter."
+    def chapter_count(self):
+        """Number of "chapter"s.
         """
-        return (
-            self.blob.words.count('chapter') / len(self.blob.words)
-            if self.blob.words else 0
-        )
+        return self.blob.words.count('chapter')
 
     def word_count(self):
         """Overall word count.
@@ -195,7 +192,7 @@ class Snippet:
             blank_line_ratio=self.blank_line_ratio(),
             caps_ratio=self.caps_ratio(),
             dialogic_punct_ratio=self.dialogic_punct_ratio(),
-            chapter_ratio=self.chapter_ratio(),
+            chapter_count=self.chapter_count(),
             word_count=self.word_count(),
             numbering_count=self.numbering_count(),
 
