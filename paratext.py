@@ -161,7 +161,7 @@ class Snippet:
     def dialogic_punct_ratio(self):
         """Ratio of "dialogic" punctuation marks.
         """
-        dialogic = re.findall('[\'“”"!?]', self.text)
+        dialogic = re.findall('[\'’"“”!?]', self.text)
 
         return (
             len(dialogic) / len(self.text)
@@ -181,6 +181,11 @@ class Snippet:
         """
         return len(self.blob.words)
 
+    def numbering_count(self):
+        """Number of "numberings" - eg, `1.`, `2.`.
+        """
+        return len(re.findall('[0-9]+\.', self.text))
+
     def features(self, tags=None):
         """Assembly a features row.
         """
@@ -192,6 +197,7 @@ class Snippet:
             dialogic_punct_ratio=self.dialogic_punct_ratio(),
             chapter_ratio=self.chapter_ratio(),
             word_count=self.word_count(),
+            numbering_count=self.numbering_count(),
 
             cd_ratio=self.tag_ratio('CD'),
             dt_ratio=self.tag_ratio('DT'),
