@@ -79,12 +79,12 @@ class TrainingText(Text):
         tag = self.tree.select_one(tag)
         return tag.text or None
 
-    def get_front(self):
+    def front(self):
         """Get the frontmatter.
         """
         return self.get_text('front')
 
-    def get_body_beginning(self, num_chars=2000):
+    def body_beginning(self, num_chars=10000):
         """Get the first N chars from the body text.
 
         Args:
@@ -158,6 +158,16 @@ class Snippet:
             if len(self.text) else 0
         )
 
+    def dialogic_punct_ratio(self):
+        """Ratio of "dialogic" punctuation marks.
+        """
+        dialogic = re.findall('[\'“”"!?]', self.text)
+
+        return (
+            len(dialogic) / len(self.text)
+            if len(self.text) else 0
+        )
+
     def chapter_ratio(self):
         """Ratio of words that are "chapter."
         """
@@ -179,6 +189,7 @@ class Snippet:
             digit_ratio=self.digit_ratio(),
             blank_line_ratio=self.blank_line_ratio(),
             caps_ratio=self.caps_ratio(),
+            dialogic_punct_ratio=self.dialogic_punct_ratio(),
             chapter_ratio=self.chapter_ratio(),
             word_count=self.word_count(),
 

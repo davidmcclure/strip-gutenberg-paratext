@@ -12,3 +12,4 @@ attrs
 scandir
 statsmodels
 boltons
+matplotlib
