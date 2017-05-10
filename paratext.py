@@ -121,7 +121,10 @@ class Snippet:
     def tag_ratio(self, *tags):
         """Given a POS tag, return a ratio of (tag count / total tokens).
         """
-        return sum([self.tag_counts[t] for t in tags]) / len(self.tags)
+        return (
+            sum([self.tag_counts[t] for t in tags]) / len(self.tags)
+            if len(self.tags) else 0
+        )
 
     def blank_line_ratio(self):
         """Ratio of lines that are blank.
@@ -130,26 +133,43 @@ class Snippet:
 
         blank_count = len([line for line in lines if not line])
 
-        return blank_count / len(lines)
+        return (
+            blank_count / len(lines)
+            if len(lines) else 0
+        )
 
     def digit_ratio(self):
         """Ratio of digit characters.
         """
         digits = re.findall('[0-9]', self.text)
 
-        return len(digits) / len(self.text)
+        return (
+            len(digits) / len(self.text)
+            if len(self.text) else 0
+        )
 
     def caps_ratio(self):
         """Ratio of digit characters.
         """
         caps = re.findall('[A-Z]', self.text)
 
-        return len(caps) / len(self.text)
+        return (
+            len(caps) / len(self.text)
+            if len(self.text) else 0
+        )
 
     def chapter_ratio(self):
         """Ratio of words that are "chapter."
         """
-        return self.blob.words.count('chapter') / len(self.blob.words)
+        return (
+            self.blob.words.count('chapter') / len(self.blob.words)
+            if self.blob.words else 0
+        )
+
+    def word_count(self):
+        """Overall word count.
+        """
+        return len(self.blob.words)
 
     def features(self, tags=None):
         """Assembly a features row.
@@ -160,6 +180,7 @@ class Snippet:
             blank_line_ratio=self.blank_line_ratio(),
             caps_ratio=self.caps_ratio(),
             chapter_ratio=self.chapter_ratio(),
+            word_count=self.word_count(),
 
             cd_ratio=self.tag_ratio('CD'),
             dt_ratio=self.tag_ratio('DT'),
